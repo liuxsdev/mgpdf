@@ -1,0 +1,21 @@
+[project]
+name = "mgpdf"
+version = "0.0.1"
+authors = [
+  { name="liuxsdev", email="1028330144@qq.com" },
+]
+description = "A small example package"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/liuxsdev/mgpdf"
+"Bug Tracker" = "https://github.com/liuxsdev/mgpdfissues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
