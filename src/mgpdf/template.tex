@@ -1,0 +1,65 @@
+\documentclass[UTF8]{ctexart}
+\usepackage[final]{pdfpages}
+
+\usepackage{hyperref}
+\usepackage[nocheck]{fancyhdr}
+\usepackage{geometry}
+
+% 修改目录样式
+\usepackage{tocloft}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+% 设置页边距
+\geometry{
+    paper=a4paper,
+    hmargin=1in,
+    vmargin=1in,
+    scale=1,
+}
+
+% 设置超链接
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    anchorcolor=black,
+    citecolor=black
+}
+
+% #1:file name 2:section name 3:landscape 4:scale 5:frame
+\newcommand{\addpdf}[5]{
+    \includepdfset{pagecommand={\thispagestyle{fancy}}}
+    \includepdf[pages={1}, frame=#5, scale=#4,landscape=#3,pagecommand=\section{#2}]{#1}
+    \includepdf[pages={2-4}, frame=#5, scale=#4,landscape=#3]{#1}
+}
+
+\newcommand{\addonepdf}[2]{
+    \includepdfset{pagecommand={\thispagestyle{fancy}}}
+    \includepdf[pages={1}, frame=true, scale=0.75,landscape=false,pagecommand=\section{#2}]{#1}
+}
+
+
+
+
+\begin{document}
+
+\heiti
+\large
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+
+
+% 附件正文
+
+\pagestyle{fancy}
+\fancyhead[L]{\kaishu{AAANAMEAAA-附件} }
+% 设置中间页码格式
+\cfoot{附件：第 \thepage 页}
+\pagenumbering{arabic}
+
+AAACONTENTAAA
+
+% \addpdf{1 附件一 人员访谈记录表.pdf}{附件一 \ 人员访谈记录表}{false}{0.75}{true}
+% \addpdf{4 附件四 钻孔柱状图.pdf}{附件四 \ 钻孔柱状图}{false}{0.75}{true}
+
+\end{document}
