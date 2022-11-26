@@ -2,6 +2,7 @@ import json
 import subprocess
 from pathlib import Path
 import click
+from PyPDF2 import PdfReader
 
 cwd = Path.cwd()
 packagejson_path = Path.joinpath(cwd, 'package.json')
@@ -14,12 +15,16 @@ def get_pdf_files():
     return list(p.glob('[1234567890]*.pdf'))
 
 
+def get_pdffile_pagenumber(pdfpath):
+    reader = PdfReader(pdfpath)
+    return len(reader.pages)
+
+
 def clean_file():
-    p = Path(cwd)
-    aux_file = list(p.glob('*.aux'))
-    log_file = list(p.glob('*.log'))
-    out_file = list(p.glob('*.out'))
-    toc_file = list(p.glob('*.toc'))
+    aux_file = list(cwd.glob('*.aux'))
+    log_file = list(cwd.glob('*.log'))
+    out_file = list(cwd.glob('*.out'))
+    toc_file = list(cwd.glob('*.toc'))
     clean_list = aux_file + log_file + out_file + toc_file
     for p in clean_list:
         p.unlink()
@@ -36,11 +41,16 @@ def runcmd(command):
 
 
 #  #1:file name 2:section name 3:landscape 4:scale 5:frame
-def add_pdf_tex_cmd(filename: str, landscape: bool = False, scale: float = 0.75, frame: bool = True):
+def addpdf_tex_cmd(filepath, landscape: bool = False, scale: float = 0.75, frame: bool = True):
+    filename = filepath.name
     a_ = filename.split(' ')
     b_ = ' '.join(a_[1:])
     section_name = b_.replace(' ', r' \ ')[:-4]
-    c_ = fr'\addpdf{{{filename}}}{{{section_name}}}{{{landscape}}}{{{scale}}}{{{frame}}}'
+    page_number = get_pdffile_pagenumber(filepath)
+    if page_number >= 2:
+        c_ = fr'\addpdf{{{filename}}}{{{section_name}}}{{{landscape}}}{{{scale}}}{{{frame}}}'
+    else:
+        c_ = fr'\addonepdf{{{filename}}}{{{section_name}}}{{{landscape}}}{{{scale}}}{{{frame}}}'
     return c_
 
 
@@ -48,7 +58,7 @@ def total_tex_cmd():
     pdfs = get_pdf_files()
     latexcmd = ''
     for pdf in pdfs:
-        latexcmd += add_pdf_tex_cmd(pdf.name) + '\n'
+        latexcmd += addpdf_tex_cmd(pdf) + '\n'
     return latexcmd
 
 
@@ -67,6 +77,7 @@ def init_project():
     project_info = {
         'papername': ''
     }
+    # outputdir,pdffiles(name,pages,landscape)
     with open(packagejson_path, 'w', encoding='utf-8') as f:
         json.dump(project_info, f, indent=4, ensure_ascii=False)
     print(project_info)
@@ -103,7 +114,7 @@ def buildpdf(papername):
     replace_template(papername)
     print(f">>> 生成tex文件: run xelatex {file_name}")
     cmd = ['xelatex', file_name]
-    runcmd(cmd)  # 需要执行两次，生成目录
+    runcmd(cmd)  # 需要执行两次，生成目录 尝试用latexmk生成
     res = runcmd(cmd)
     print(res.split("\n")[-3])
     print(">>> 清理生成文件")

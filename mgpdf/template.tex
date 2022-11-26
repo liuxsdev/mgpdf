@@ -29,12 +29,12 @@
 \newcommand{\addpdf}[5]{
     \includepdfset{pagecommand={\thispagestyle{fancy}}}
     \includepdf[pages={1}, frame=#5, scale=#4,landscape=#3,pagecommand=\section{#2}]{#1}
-    \includepdf[pages={2-4}, frame=#5, scale=#4,landscape=#3]{#1}
+    \includepdf[pages={2-}, frame=#5, scale=#4,landscape=#3]{#1}
 }
 
-\newcommand{\addonepdf}[2]{
+\newcommand{\addonepdf}[5]{
     \includepdfset{pagecommand={\thispagestyle{fancy}}}
-    \includepdf[pages={1}, frame=true, scale=0.75,landscape=false,pagecommand=\section{#2}]{#1}
+    \includepdf[pages={1}, frame=#5, scale=#4,landscape=#3,pagecommand=\section{#2}]{#1}
 }
 
 
