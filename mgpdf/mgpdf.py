@@ -1,8 +1,10 @@
 import json
 import subprocess
 from pathlib import Path
+
 import click
-from PyPDF2 import PdfReader
+
+from pdfinfo import get_pdffile_pagenumber
 
 cwd = Path.cwd()
 packagejson_path = Path.joinpath(cwd, 'package.json')
@@ -13,11 +15,6 @@ template_file_path = Path.joinpath(pyfile_dict, 'template.tex')
 def get_pdf_files():
     p = Path(cwd)
     return list(p.glob('[1234567890]*.pdf'))
-
-
-def get_pdffile_pagenumber(pdfpath):
-    reader = PdfReader(pdfpath)
-    return len(reader.pages)
 
 
 def clean_file():
@@ -129,20 +126,20 @@ def cli():
 
 @cli.command()
 def init():
-    '''Init Project'''
+    """Init Project"""
     click.echo(click.style(f"Init Project", fg='yellow'))
     init_project()
 
 
 @cli.command()
 def info():
-    '''Show project info'''
+    """Show project info"""
     show_info()
 
 
 @cli.command()
 def build():
-    '''Build pdf file'''
+    """Build pdf file"""
     project_info = get_project_info()
     if project_info['papername'] == '':
         print("empty name")
