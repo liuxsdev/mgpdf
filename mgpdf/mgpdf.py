@@ -29,12 +29,18 @@ def clean_file():
 
 def runcmd(command):
     ret = subprocess.run(command, shell=True, stdout=subprocess.PIPE,
-                         stderr=subprocess.PIPE, encoding="utf-8")
+                         stderr=subprocess.PIPE)
     if ret.returncode == 0:
         resa = ret.stdout
     else:
         resa = ret.stderr
     return resa
+
+
+def clean_file_use_latexmk(file_name):
+    cmd = ['latexmk', '-c', file_name]
+    res = runcmd(cmd)
+    return res
 
 
 def tex_add_pages(filename, pages: str, frame: bool = True, scale: float = 0.75, landscape: bool = False):
@@ -128,13 +134,23 @@ def buildpdf(papername):
     generate_tex_file(papername)
     print("✓")
     print(">>> 使用xelatex编译", end=' ')
-    cmd = ['xelatex', file_name]
+    # cmd = ['xelatex', file_name]
+    cmd = ['latexmk', '-interaction=nonstopmode', '-file-line-error', '-pdf', '-xelatex', file_name]
     runcmd(cmd)  # 需要执行两次，生成目录 尝试用latexmk生成
     res = runcmd(cmd)
     print("✓")
-    print(res.split("\n")[-3])
+    msg = res.split(b'\r\n')[-2]
+    try:
+        print(msg.decode('gbk'))
+    except UnicodeDecodeError:
+        print(msg)
     print(">>> 清理文件")
-    clean_file()
+    rclean = clean_file_use_latexmk(file_name)
+    msg = rclean.split(b'\r\n')[-2]
+    try:
+        print(msg.decode('gbk'))
+    except UnicodeDecodeError:
+        print(msg)
     print(">>> 完成")
 
 

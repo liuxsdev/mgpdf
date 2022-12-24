@@ -22,12 +22,12 @@ def page_is_landscape(pdf_page):
     参考：https://stackoverflow.com/questions/37424416/how-to-get-pdf-orientation-using-pypdf2
     媒体框（media box）定义将用于印刷页面的物理介质的边界。
     旋转属性会覆盖mediaBox的设置，因此需要结合旋转属性进行判断：
-    当 宽 > 高，并且不旋转或旋转180度的情况下，判断页面为横向Landscpae，否者为正常竖向
-    当 宽 < 高，并且不旋转或旋转180度的情况下，页面为正常竖向，否者则是经过旋转，最终页面呈现效果是横向
+    当 宽 > 高，并且不旋转或旋转180度的情况下，判断页面为横向Landscpae，否则为正常竖向
+    当 宽 < 高，并且不旋转或旋转180度的情况下，页面为正常竖向，否则则是经过旋转，最终页面呈现效果是横向
     """
     deg = pdf_page.get("/Rotate")
     mediabox = pdf_page.mediabox
-    width, height = mediabox.getUpperRight()
+    width, height = mediabox.upper_right
     if width > height:
         if deg in [0, 180, None]:
             return True
@@ -67,8 +67,11 @@ def page_break(page_list):
     mark_all = []
     start = 1
     mark = [start]
-    for i in range(1, len(page_list)):
-        if start == len(page_list) - 2:
+    number_of_page_list = len(page_list)
+    if number_of_page_list == 2:
+        return ['1', '2']
+    for i in range(1, number_of_page_list):
+        if start == number_of_page_list - 2:
             # print("特殊处理{}".format(start))
             if page_list[start] == page_list[start + 1]:
                 start += 1
